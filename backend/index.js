@@ -10,7 +10,7 @@ app.use(express.json())
 app.use('/products', productRoutes);
 
 const DB_NAME = process.env.DB_NAME;
-const PORT = process.env.PORT || 300;
+const PORT = process.env.PORT;
 const DB_URL = process.env.DB_URL;
 
 

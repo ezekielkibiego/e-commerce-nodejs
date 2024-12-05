@@ -17,6 +17,10 @@ const productSchema = new mongoose.Schema({
 {strict: true}
 );
 
+const handleError = (res, message, error, statusCode = 500) => {
+    res.status(statusCode).json({ message, error });
+  };
+  
 const Product = mongoose.model('Product', productSchema);
 
 // Get all products
@@ -54,5 +58,45 @@ router.post('/', async(req, res) => {
         res.status(500).json({ message: "Failed to add product", error: error.message}); 
     }
 });
+
+// Update a product by ID
+
+router.patch('/:id', async (req, res) => {
+    const {name, description, price, category, stock, images} = req.body;
+    try {
+        const product = await Product.findById(req.params.id);
+        if (!product) {
+            return handleError( res, 'Product not found', `No product with ID ${req.params.id}`, 404)
+        }
+        if (name) product.name = name;
+        if (description) product.description = description;
+        if (price) product.price = price;
+        if (category) product.category = category;
+        if (stock) product.stock = stock;
+        if (images) product.images = images;
+
+        await  product.save();
+        res.status(200).json({ message: 'Product updated successfully', product});
+    } catch (error) {
+        handleError(res, 'Failed to update product', error.message);
+    }
+
+});
+
+// Delete a product by ID
+
+router.delete('/:id', async (req, res) => {
+    try {
+      const product = await Product.findByIdAndDelete(req.params.id);
+  
+      if (!product) {
+        return handleError(res, 'Product not found', `No product with ID ${req.params.id}`, 404);
+      }
+  
+      res.status(200).json({ message: 'Product deleted successfully' });
+    } catch (error) {
+      handleError(res, 'Failed to delete product', error.message);
+    }
+  });
 
 export default router;
