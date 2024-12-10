@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import axios from 'axios';
 
+const baseURL = import.meta.env.VITE_API_BASE_URL;
+
 const ContactForm = () => {
   const {
     register,
@@ -15,7 +17,7 @@ const ContactForm = () => {
 
   const onSubmit = async (data) => {
     try {
-      const response = await axios.post('http://localhost:3000/api/contacts', data);
+      const response = await axios.post(`${baseURL}/contacts`, data);
       setSuccessMessage(response.data.message); // Set success message
       reset(); // Reset form fields
 
